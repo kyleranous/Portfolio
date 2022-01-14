@@ -19,7 +19,7 @@
         <!-- Navigation-->
         <nav class="navbar navbar-expand-lg navbar-light" id="mainNav">
             <div class="container px-4 px-lg-5">
-                <a class="navbar-brand" href="index.html">kranous.com</a>
+                <a class="navbar-brand" href="../../index.html">kranous.com</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
                     Menu
                     <i class="fas fa-bars"></i>
@@ -53,9 +53,35 @@
             <div class="container px-4 px-lg-5">
                 <div class="row gx-4 gx-lg-5 justify-content-center">
                     <div class="col-md-10 col-lg-8 col-xl-7">
-
-                        <!--- ARTICLE TEXT GOES HERE-->
-                        
+                        <img src="../../assets/img/homeauto/pi-stack.jpg" style="max-width:100%; max-height:100%">
+                        <p>My current home server (1x Dell R710) is starting to get pretty full and I want to free up some resources. 
+                            I figure the best way is to move my home automation server onto its own setup. 
+                            I have some requirements for my new setup:
+                            <ul>
+                                <li>The setup must be cheap - preferably using components I have lying around, or that I can pick up cheap and fast</li>
+                                <li>It must be reliable – Automated Backups, and self healing as much as possible.</li>
+                                <li>It should be scalable – If I need more resources it should be quick and cheap to add resources.</li>
+                                <li>It should increase my skillset – I want to learn something new doing this.</li>
+                                <li>It should be fun – I love automation and this opportunity to refresh my setup should be fun to do, and at least not painful to maintain.</li>
+                            </ul>
+                        </p>
+                        <p>
+                            Looking at my requirements, a cluster of raspberry pi’s sounds like a great idea. I have a stack of pi 3B and 3B+ from old projects,
+                             and the 3B and 3B+ can be picked up on amazon for less then $40. A docker swarm will redeploy containers if a node goes offline, 
+                             and with some additional configuration the swam can auto-scale microservices that require more resources, as needed. PLUS I have never 
+                             built a cluster before so I get to learn something new.
+                        </p>
+                        <hr class="my-4" />
+                        <p>
+                            I am breaking this project into smaller chunks. At the end of each entry, there will be a functioning section of the project that can 
+                            be used and grown upon (Home Assistant is installed in part 3). Any code that is written will be published on my github. You can 
+                            replicate the code yourself or just take and run my code. After the server is setup and running we will head into my shop to build 
+                            an enclosure for the server and a control panel, then we will start looking at designing our own IoT devices.
+                        </p>
+                        <p><a href="!#">Part 1 - Building the Cluster</a></p>
+                        <p><a href="!#">Part 2 - Syncing Data</a></p>
+                        <p><a href="!#">Part 3 - Installing and Configuring Home Assistant</a></p>
+                        <p><a href="!#">Part 4 - Getting Organized</a></p>
                     </div>
                 </div>
             </div>
