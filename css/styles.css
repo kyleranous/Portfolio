@@ -264,6 +264,7 @@ pre {
   margin-bottom: 1rem;
   overflow: auto;
   font-size: 0.875em;
+  background-color: rgba(211, 212, 213, 0.5)
 }
 pre code {
   font-size: inherit;
@@ -275,6 +276,7 @@ code {
   font-size: 0.875em;
   color: #d63384;
   word-wrap: break-word;
+  
 }
 a > code {
   color: inherit;
@@ -11240,6 +11242,18 @@ header.masthead .site-heading .h1 {
 }
 .post-preview > .post-meta > a {
   text-decoration: none;
+}
+
+.note {
+  background-color: rgba(25, 135, 150, 0.2);
+  padding: 20px 20px 20px 20px;
+  border-radius: 5px;
+  font-size: .85em;
+
+}
+.nav-button {
+  background-color: rgba(255,255,255,0.4)
+  
 }
 @media (min-width: 992px) {
   .post-preview > a > .post-title {

@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>kranous - Home Automation</title>
+        <link rel="icon" type="image/x-icon" href="../../assets/favicon.ico" />
+        <!-- Font Awesome icons (free version)-->
+        <script src="https://use.fontawesome.com/releases/v5.15.4/js/all.js" crossorigin="anonymous"></script>
+        <!-- Google fonts-->
+        <link href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css" />
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="../../css/styles.css" rel="stylesheet" />
+    </head>
+    <body>
+        <!-- Navigation-->
+        <nav class="navbar navbar-expand-lg navbar-light" id="mainNav">
+            <div class="container px-4 px-lg-5">
+                <a class="navbar-brand" href="../../index.html">kranous.com</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                    Menu
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarResponsive">
+                    <ul class="navbar-nav ms-auto py-4 py-lg-0">
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="../../index.html">Home</a></li>
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="../../about.html">About</a></li>
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="../../projectList.html">Projects</a></li>
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <!-- Page Header-->
+        <header class="masthead" style="background-image: url('assets/img/post-bg.jpg')">
+            <div class="container position-relative px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-md-10 col-lg-8 col-xl-7">
+                        <div class="post-heading">
+                            <h1>Home Automation</h1>
+                            <h2 class="subheading">Part 1: Building The Cluster</h2>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- Post Content-->
+        <article class="mb-4">
+            <div class="container px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-md-10 col-lg-8 col-xl-7">
+                        <p>
+                            In part 1 we will build the physical cluster, install docker, initiate the swarm, and start our first container to monitor the swarm. 
+                            At the end of this tutorial we will have a cluster of at least 2 pi’s that is ready to start running containers.
+                        </p>
+                        <hr class="my-4" />
+                        <img src="../../assets/img/homeauto/hardware_layout.jpg" style="max-width: 100%; max-height: 100%;">
+                        <p>
+                            I am using:
+                            <ul>
+                                <li><strike>4x Raspberry Pi 3Bs</strike> - Supply on 3Bs has been low, use Raspberry Pi 4.</li>
+                                <li>4x 16gb Micro SD Cards</li>
+                                <li><strike>1x USB Powered USB Hub</strike> – I am using an Atolla 7-port powered USB Hub to power my Pi’s, I haven’t had issues with this tactic before, 
+                                    but while building the project I noticed that turning ports on and off causes a power surge that forces all Pi’s to reboot. 
+                                    Use legitimate power supplies rated at 2.5A for each Pi.</li>
+                                <li>1x Netgear 8-port gigabit network switch</li>
+                                <li>4x Network Patch Cables (I made my own)</li>
+                                <li><a href="https://www.amazon.com/Geekworm-Raspberry-Installation-Standoff-Accessories/dp/B0756CW6Y2/ref=sr_1_8?dchild=1&keywords=2.5mm+Standoff&qid=1615265415&sr=8-8" target="_blank">Standoff Set</a></li>
+                            </ul>
+                        </p>
+                        <h2>Build the tower</h2>
+                        <p>
+                            Later we will design and build a modular enclosure for the pi’s, but this tower will work through setup, and really, for the life of the project 
+                            if you want. The tower will keep the boards organized and secure while building configuring and troubleshooting the cluster. Using the standoffs, 
+                            stack the pi’s into a tower. I use 6mm standoffs on the bottom board to act as feet, and 19mm standoffs between each board. The top board is 
+                            secured with 2.5mm screws. I have numbered my Pi’s on the top of the ethernet port to keep track of them. This isn’t necessary but may be helpful 
+                            to keep track of boards when moving to an enclosure.
+                        </p>
+                        <figure>
+                            <img src="../../assets/img/homeauto/pi-stack.jpg" style="max-width: 100%;">
+                            <figcaption>My assembled 4-Node Pi Stack</figcaption>
+                        </figure>
+                        <h2>Flash the SD cards</h2>
+                        <p>
+                            To flash the SD Cards we need software to flash the SD Card and the OS image file. I am using <a href="https://www.balena.io/etcher/" target="_blank">Etcher</a> to flash the cards. It is free and simple to use. 
+                            Though there are other options out there.
+                        </p>
+                        <p>
+                            The OS we are using is Raspberry Pi OS Lite (Buster) and the image file can be downloaded from the <a href="https://www.raspberrypi.com/software/operating-systems/#raspberry-pi-os-32-bit" target="_blank">Raspberry Pi Foundation</a> Website. The lite version has 
+                            minimal software pre-installed and no graphical desktop environment.
+                        </p>
+                        <p>
+                            Once Etcher is installed and the OS image is downloaded and extracted, insert the first SD Card into the card slot and open Etcher. Select the image file, 
+                            then the SD Card. Make sure you are selecting the right drive letter (Etcher should hide your system drives, but always double check). then hit “Flash”
+                        </p>
+                        <figure>
+                            <img src="../../assets/img/homeauto/etcher-sd-card-flash.png" style="max-width: 100%">
+                            <figcaption>Etcher Interface</figcaption>
+                        </figure>
+                        <p>
+                            Etcher will flash the SD Card with the image and verify that it was done correctly. When it is finished check the drive letter of the boot drive on the SD Card, 
+                            in Windows explorer it is labeled as “boot”. Leave the card in the computer.
+                        </p>
+                        <p>
+                            Raspberry Pi OS disables SSH by default. We need to add an empty file to the boot drive called ‘ssh’ to enable SSH on boot. SSH (Secure SHell) is how we will 
+                            interface with the R-pi. Using SSH means we do not need any extra peripherals or a monitor to plug in, it will let us control it from our desktop.
+                        </p>
+                        <p>
+                            To create this file open the Start menu and type <code>cmd</code> . This will open the windows terminal. Type in the drive letter of the boot drive followed by <code>:</code> and hit 
+                            ENTER to switch to the boot drive.
+                        </p>
+                        <pre>
+<code>Microsoft Windows [Version 10.0.19041.804]</code>
+<code>(c) 2020 Microsoft Corporation. All rights reserved.</code>
+ 
+<code>C:\Users\[username]> D:</code>
+                        </pre>
+                        <p>We will use <code>echo</code> to output a file called ‘ssh’ type:</p>
+                        <pre><code>>echo. > ssh</code></pre>
+                        <figure>
+                            <img src="../../assets/img/homeauto/cmd_screenshot.png" style="margin-left: auto; margin-right: auto; display: block;">
+                        </figure>
+                        <div class="note">
+                                The echo command outputs a string, the ‘>’ tells the command to output to a file, ssh is the name of the file. 
+                                If the file doesn’t exist, it will create the file. The period after echo suppresses echo’s default output.<br>
+                                If we were to type <br>
+                                <code>echo > ssh</code><br>
+                                then by default the echo command would write the string “ECHO is on.” to the file.<br>
+                                If we were to type<br>
+                                <code>echo Hello World > test.txt</code><br>
+                                A file called test.txt would be created containing:<br>
+                                ECHO is on<br>
+                                Hello World
+                        </div>
+                        <p>
+                            Verify that the boot drive now contains a file called ‘ssh’. If it’s there, eject the SD Card and insert it into the first Pi. 
+                            If the file is not there, open the terminal and verify you are inputting the commands in the correct drive letter.
+                        </p>
+                        <p>
+                            Repeat this process for the rest of the SD cards.
+                        </p>
+                        <h2>Initial Configuration</h2>
+                        <p>
+                            I recommend performing this step one pi at a time to help keep things organized. Create a new text file on your desktop 
+                            (Or use Excel, or Word or whatever you want) to record information. Connect the first Pi to your network and power it on. 
+                            The first boot will take a minute as initial setup scripts run. We need to find the IP address of this Pi. If you are 
+                            comfortable with your routers admin interface you can find it in there or we can use another piece of free software called 
+                            <a href="https://angryip.org" target="_blank">Angry IP Scanner</a>.
+                        </p>
+                        <p>
+                            Download, Install, and Run Angry IP Scanner on your desktop. Leave the default settings and hit the Start button. The scan takes 
+                            a minute and when it is done, should provide a list of every pingable device on your network. Click the ‘Hostname’ column header 
+                            to sort by hostname and find the hostname ‘raspberrypi.local’
+                        </p>
+                        <figure>
+                            <img src="../../assets/img/homeauto/angryip-scan-1.png" style="margin-left: auto; margin-right: auto; display: block;">
+                        </figure>
+                        <p>
+                            In notepad record the IP address of the pi.
+                        </p>
+                        <p>
+                            Now we are going to SSH into the raspberry pi. Windows has a built in SSH client, but we will be using PuTTY, a free SSH client with a 
+                            nice interface that lets you save settings to quickly connect to nodes in the future. Download <a href="https://www.putty.org" target="_blank">PuTTY</a> from the putty.org website and run it.
+                        </p>
+                        <p>
+                            Enter the Pi’s IP Address in the Host Name field, leave the Port at 22, and Connection type set to SSH.
+                        </p>
+                        <figure>
+                            <img src="../../assets/img/homeauto/putty.png" style="margin-left: auto; margin-right: auto; display: block;">
+                        </figure>
+                        <p>
+                            Click Open, If you have done everything successfully you will get a warning. All this warning is sayings is that you have never connected to this 
+                            device before and your computer doesn’t recognize it yet. Click OK and a terminal window will open asking you for a login. On Raspberry Pi OS the 
+                            default username is ‘pi’ and the default password is ‘raspberry’. If you typed in the username and password correctly you will get some text and 
+                            your cursor. Congratulations you are now remotely connected to your pi.
+                        </p>
+                        <p>
+                            For the initial configuration we are going to:
+                            <ul>
+                                <li>Change the default password – Always a good idea, but especially when port 22 is open</li>
+                                <li>Change the device’s host name</li>
+                                <li>Update the pre-installed software</li>
+                            </ul>
+                        </p>
+                        <p>
+                            In the terminal type <code>sudo passwd pi</code> and hit enter. Follow the prompts to updated your password.
+                        </p>
+                        <div class="note">
+                            Breaking this command down:<br>
+                            <br>
+                            <b>sudo</b> (Super User DO) elevates your user to have root permissions for the specific action you are about to perform. 
+                            Typically on linux systems you will be asked to input your sudo password when running commands, Raspberry Pi OS has the user, pi, 
+                            in the sudo group without needing a password. This is useful when doing initial setups, but should be changed back to require a 
+                            password when your system is in production.<br>
+                            <br>
+                            <b>passwd</b> is the application to change a password.<br>
+                            <br>
+                            <b>pi</b> is the user you want to change the password for. I am sure by know you have noticed that when typing passwords in linux, 
+                            no characters display. This is the normal behavior.
+                        </div>
+                        <p>
+                            Next we will change the hostname of the pi. We will use a built in text editor called nano. Type:<br>
+                            
+                            <pre><code>$ sudo nano etc/hosts</code></pre>
+                            
+                            Navigate through the text file using arrow keys and find the line that says: <br>
+                            <br>
+                            127.0.0.1   raspberry<br>
+                            <br>
+                            Delete raspberry and change it to a new host name. I am calling my setup hana and I am numbering each node so my hostname for the first 
+                            pi is <em>hana01</em>. This can be just about anything you want, but if you want simplicity use <em>docker01</em>. The next pi will then be <em>docker02</em> and 
+                            so on. At the bottom of the screen is a guide to nano commands. to save our changes press <strong>[CTRL]+O</strong>, it asks for a file name; just hit enter 
+                            to save to the same file, then a message will tell you <strong>[ Wrote n lines ]</strong> to tell you it was a successful save. Press <strong>[CTRL]+X</strong> to exit nano 
+                            and return to the terminal screen. Log the new hostname next to the ip address in your notes.
+                        </p>
+                        <p>
+                            Then we need to change the hostname in /etc/hostname run:<br>
+                            
+                            <pre><code>$ sudo nano /etc/hostname</code></pre>
+                            
+                            And replace raspberry with your new hostname. Save and exit (<strong>[CTRL]+O</strong> , <strong>[CTRL]+X</strong>)
+                        </p>
+                        <p>
+                            Reboot the pi so the new hostname takes effect. To safely reboot a raspberry pi type:<br>
+                            
+                            <pre><code>sudo reboot</code></pre>
+                            
+                            you will be told that the connection was unexpectedly terminated, Close the ssh terminal window, wait a few seconds, reopen PuTTY and reconnect to the 
+                            Pi. Now in the hostname field you can type the IP address or you can use the new hostname you used followed by .local. For my Pi that would be 
+                            'hana01.local'.
+                        </p>
+                        <p>
+                            Login using pi and your new password, now we are going to update the pre-installed software. Type:<br>
+                            <pre><code>$ sudo apt update && sudo apt upgrade -y</code></pre>
+                        </p>
+                        <p>
+                            This will probably take a few minutes so lets talk about what's going on here.<br>
+                            <div class="note">
+                                <p>
+                                    <strong>apt</strong> is a command line utility for managing packages on Debian based systems. Packages are software that run on the computer. apt is extremely 
+                                    useful and easy to use to install software that is maintained in a repository. You will also see sudo apt-get [arg] this is the old method, 
+                                    the -get is no longer required.
+                                </p>
+                                <p>
+                                    <strong>update</strong> is pulling the most recent list of packages and versions to compare against packages that are installed on the pi, If we were to run 
+                                    update alone, it would tell us how many current packages need to be updated
+                                </p>
+                                <p>
+                                    <strong>&&</strong> is a joining command, you are telling the system to run a command AND THEN run the following command, but ONLY if the preceding command 
+                                    completes successfuly
+                                </p>
+                                <p>
+                                    <strong>upgrade</strong> will...upgrade...any installed packages that have updates available, the -y is a flag to tell it you approve of whatever prompts it 
+                                    will throw. Without the -y, every package will tell you how much additional space is needed and ask you to accept it...this can get tedious when doing large 
+                                    upgrades like on initial setups. 
+                                </p>
+                            </div>
+                        </p>
+                        <p>
+                            Once the updates are complete, do a final reboot of the pi and repeat these steps for each additional pi, making sure to log the IP addresses and Hostnames.
+                        </p>
+                        <h2>Install Docker</h2>
+                        <p>
+                            You should now be able to open multiple instances of Putty and log into each of your Pis. Docker has an install script that detects the architecture of the 
+                            system and downloads and installs the correct version of Docker. We will use 'curl' to get the install script. On each Pi run:<br>
+                            
+                            <pre><code>$ curl -ssl https://get.docker.com | sh</code></pre>
+                        </p>
+                        <p>
+                            This command will download and run the install script. This takes a few minutes. At a couple points the script my pause  and notify you that docker may already 
+                            be installed and give you the opportunity to cancel the install. Just leave it alone and it will continue when the timer runs out. 
+                        </p>
+                        <p>
+                            While Docker installs, lets talk about what we just ran.
+                            <div class="note">
+                                <p>
+                                    <strong>curl</strong> is a command line utility for transferring data using multiple protocols. We will  be using this more when we setup devices in our smart home
+                                </p>
+                                <p>
+                                    <strong>-ssl</strong> is a flag telling curl to try to use SSL/TLS when communicating with the server 
+                                </p>
+                                <p>
+                                    <strong>http://get.docker.com</strong> is the target URL and tells Linux to pull the install script.
+                                </p>
+                                <p>
+                                    <strong>|</strong> is called a pipe, and it passes the output of the preceding command as an input to the following command
+                                </p>
+                                <p>
+                                    <strong>sh</strong> is a command to run a script file. So we pull the install script from the website, and pipe it to sh.
+                                </p>
+                            </div>
+                        </p>
+                        <p>
+                            Adding the user pi to the docker group allows you to run docker commands with out elevating them with sudo. Run:<br>
+                            
+                            <pre><code>$ sudo usermod -aG docker pi</code></pre>
+                        </p>
+                        <p>
+                            Next we need to set the docker services to start automatically on boot. Docker has two services we need 'docker' and 'containerd'. Run:<br>
+                            
+                            <pre><code>$ sudo systemctl enable docker.service && sudo systemctl enable containerd.service</code></pre>
+                        </p>
+                        <p>
+                            Then reboot the Pi. Remember, this needs to be done on all the Pi's.
+                        </p>
+                        <p>
+                            When the Pis come back up log back in and verify your docker installations by running:<br>
+                            
+                            <pre><code>docker run hello-world</code></pre>
+                        </p>
+                        <h2>Create the swarm</h2>
+                        <p>
+                            We will now create the swarm and start adding our nodes. A docker swarm has two types of nodes, managers, and workers. Managers monitor resources and deploy containers to 
+                            nodes. Managers can also act as workers and will run containers also. Workers only run containers. Managers in Docker Swarm require a quorum (majority) to run actions. So 
+                            if there are 3 manager nodes, 2 managers must be present to perform an action. This setup allows us to loose 1 manager and still have our swarm functioning. I will be 
+                            setting up my swarm with three managers, and one worker. 
+                        </p>
+                        <p>
+                            SSH into the first pi (hana01 for me). We will initiate the swarm on this node.<br>
+                            
+                            <pre><code>$ docker swarm init --advertise-addr [NODE IP ADDRESS]</code></pre>
+                            
+                            Replace [NODE IP ADDRESS] with the IP address of the node you are running on. Once the command completes it will give you a command for worker join. Copy this command and 
+                            paste it in your notes where you recorded ip addresses and host names. We will need this command later. Make sure you note it as 'Worker Join'.
+                        </p>
+                        <p>
+                            We need to generate the manager join token to add managers to the swarm. Run:<br>
+                            
+                            <pre><code>$ docker swarm join-token manager</code></pre>
+                            
+                            Copy the generated command and paste it in your notes. Make sure to note it as 'Manager Join'.
+                        </p>
+                        <p>
+                            Lets add the rest of the nodes. 
+                        </p>
+                        <p>
+                            Open the next pi, copy the Manager Join Command and paste it into the terminal. Then repeat again with the third node. Open the last Pi and use the worker join to join 
+                            as a worker. Switch to one of the manager nodes and run the command: <br>
+                            <pre><code>$ docker node ls</code><br></pre>
+                            It will return a list like this:<br>
+                            <figure>
+                                <img src="../../assets/img/homeauto/docker-node-ls-result.png" style="margin-left: auto; margin-right: auto; display: block;">
+                            </figure>
+                        </p>
+                        <p>
+                            This list the nodes that are connected to the swarm and their status. If one of the nodes goes offline for any reason the Status and Availability will change. If the 
+                            leader node is removed, one of the other managers will be promoted to leader.
+                        </p>
+                        <h2>Our first service!</h2>
+                        <p>
+                            Now the good stuff, our first service is going to be a status visualizer. This container will create a Web dashboard to display the status of the swarm and what 
+                            containers are running. On one of the manager nodes run:
+                            <pre>
+<code>$ docker service create --name vix \</code>
+<code>  --publish 8080:8080/tcp \</code>
+<code>  --constraint node.role==manager \</code>
+<code>  --mount type=bind,src=/var/run/docker.sock,dst=/var/run/docker.sock \</code>
+<code>  alexellis2/visualizer-arm:latest</code></pre>
+                        </p>
+                        <p>
+                            This will start the service and download the container on each of the manager nodes. While the container is deploying it will show the REPLICAS value as 0/1. 
+                            Once it is complete that will update to 1/1. At this point open your web browser on your desktop and navigate to <strong>[NODE ADDRESS]:8080</strong>
+                            <figure>
+                                <img src="../../assets/img/homeauto/visualizer-screenshot.png" style="margin-left: auto; margin-right: auto; display: block;">
+                            </figure>
+                        </p>
+                        <p>
+                            Your swarm is now set up. In Part 2 we will discuss what the cloud, microservices, and container are and we will install our own cloud service to keep data 
+                            synced across nodes.  
+                        </p>
+                        <!-- TO DO--
+                            NEED TO ADD NAVIGATION BUTTONS TO BOTTOM OF PAGE
+                        -->
+                    </div>
+                </div>
+            </div>
+        </article>
+        <!-- Footer-->
+        <footer class="border-top">
+            <div class="container px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-md-10 col-lg-8 col-xl-7">
+                        <ul class="list-inline text-center">
+                            <li class="list-inline-item">
+                                <a href="#!">
+                                    <span class="fa-stack fa-lg">
+                                        <i class="fas fa-circle fa-stack-2x"></i>
+                                        <i class="fab fa-twitter fa-stack-1x fa-inverse"></i>
+                                    </span>
+                                </a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a href="#!">
+                                    <span class="fa-stack fa-lg">
+                                        <i class="fas fa-circle fa-stack-2x"></i>
+                                        <i class="fab fa-discord fa-stack-1x fa-inverse"></i>
+                                    </span>
+                                </a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a href="https://github.com/silverback338/">
+                                    <span class="fa-stack fa-lg">
+                                        <i class="fas fa-circle fa-stack-2x"></i>
+                                        <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                                    </span>
+                                </a>
+                            </li>
+                        </ul>
+                        <div class="small text-center text-muted fst-italic">Copyright &copy; kranous.com 2022</div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <!-- Bootstrap core JS-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Core theme JS-->
+        <script src="js/scripts.js"></script>
+    </body>
+</html>
