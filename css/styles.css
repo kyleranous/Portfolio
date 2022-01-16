@@ -3032,6 +3032,7 @@ textarea.form-control-lg {
   color: #fff;
   background-color: #6c757d;
   border-color: #6c757d;
+  border-radius: 5px;
 }
 .btn-secondary:hover {
   color: #fff;
@@ -11252,8 +11253,8 @@ header.masthead .site-heading .h1 {
 
 }
 .nav-button {
-  background-color: rgba(255,255,255,0.4)
-  
+  width: 190px;
+
 }
 @media (min-width: 992px) {
   .post-preview > a > .post-title {
