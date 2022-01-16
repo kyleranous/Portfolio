@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>kranous - Home Automation</title>
+        <link rel="icon" type="image/x-icon" href="../../assets/favicon.ico" />
+        <!-- Font Awesome icons (free version)-->
+        <script src="https://use.fontawesome.com/releases/v5.15.4/js/all.js" crossorigin="anonymous"></script>
+        <!-- Google fonts-->
+        <link href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css" />
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="../../css/styles.css" rel="stylesheet" />
+    </head>
+    <body>
+        <!-- Navigation-->
+        <nav class="navbar navbar-expand-lg navbar-light" id="mainNav">
+            <div class="container px-4 px-lg-5">
+                <a class="navbar-brand" href="../../index.html">kranous.com</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                    Menu
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarResponsive">
+                    <ul class="navbar-nav ms-auto py-4 py-lg-0">
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="../../index.html">Home</a></li>
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="../../about.html">About</a></li>
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="../../projectList.html">Projects</a></li>
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <!-- Page Header-->
+        <header class="masthead" style="background-image: url('assets/img/post-bg.jpg')">
+            <div class="container position-relative px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-md-10 col-lg-8 col-xl-7">
+                        <div class="post-heading">
+                            <h1>Home Automation</h1>
+                            <h2 class="subheading">Part 3: Installing and Configuring Home Assistant</h2>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- Post Content-->
+        <article class="mb-4">
+            <div class="container px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-md-9 col-lg-8 col-xl-7">
+                        <figure>
+                            <img src="../../assets/img/homeauto/220px-Home_Assistant_Logo.svg.png" style="margin-left: auto; margin-right: auto; display: block; max-width: 100%;">
+                        </figure>
+                        <p>
+                            Finally, the heart of this project. We are going to install the Home Assistant container. But, what is a container? In short a container is a completely self contained 
+                            application that is run on a virtual machine. When we talk about downloading a container image, we are downloading an image file with the application and all internal 
+                            links and libraries pre-built. This is an extremely beneficial system. We don't have to worry about library compatibility between multiple applications, because they are 
+                            each using their own libraries. If we break something, we can just kill the container and spin up a fresh new one without damage to the rest of our system. If something 
+                            is corrupted, it is limited to the container and wont damage anything else in the system, and it can be spun up as needed.
+                        </p>
+                        <p>
+                            There are advantages to development also. I can develop an application on my local machine with all the libraries and dependencies, package them up into a container and 
+                            deploy them to a test environment without having to worry about doing any additional configuration in the environment. Since it worked on my machine, it should work in 
+                            the test environment. Then when all the testing is complete, I can deploy it to production. If the app is high use,  I can deploy it along side the old version, and once 
+                            it is set up and running I can redirect traffic to the new image and shut down the old image. I just integrated an update without any of the users experiencing a service 
+                            interruption (Or at least a very minor one). Later in the project we will utilize a test/production environment setup, but for now our main use of the containers is uptime. 
+                            If a node goes offline because of damage, or maintenance, Docker Swarm will automatically initiate a new container for us. 
+                        </p>
+                        <p>
+                            <a href="https://www.home-assistant.io/" target="_blank">Home Assistant</a> is a home automation platform that integrates with the various smart devices in your home with 
+                            pre-built integrations. It has a dashboarding system that lets you build simple interfaces, android and iOS apps, and a very nice scripting and automation setup. It also has 
+                            a very large and active community to help develop new features and help troubleshoot any issues you may have.
+                        </p>
+                        <p>
+                            This tutorial will cover deploying the container, and setting up the configuration folder to make sure it stays synced across all nodes. Then we will add some software sensors 
+                            and create a dashboard that reports our node status. However, since no two people are going to have the same set-up, we will not be getting in to setting up smart devices. 
+                            After this tutorial please reference the Home Assistant <a href="https://www.home-assistant.io/docs/" target="_blank">Documentation</a> and 
+                            <a href="https://community.home-assistant.io/" target="_blank">forums</a> for the specific devices you need to setup. 
+                        </p>
+                        <h2>Deploying Home Assistant</h2>
+                        <p>
+                            SSH into node 1, or any of your manager nodes. We need to create a folder in our Syncfolder from Part 2 for the Home Assistant Configuration files. Navigate to Sync with:
+                            <pre><code>$ cd Sync</code></pre>
+                            And make a new folder called ha_conf
+                            <pre><code>$ mkdir ha_conf</code></pre>
+                            After a few seconds this folder will be synced across all nodes.
+                        </p>
+                        <p>
+                            Now deploy the container with:
+<pre>
+<code>$ docker service create \</code>
+<code>    --name homeassitant \</code>
+<code>    --mount type=bind,src=/etc/localtime,dst=/etc/localtime:ro \</code>
+<code>    --mount type=bind,src=/home/pi/Sync/ha_conf,dst=/config \</code>
+<code>    --publish 8123:8123 \</code>
+<code>    --mount type=bind,src=/var/run/docker.sock,dst=/var/run/docker.sock \</code>
+<code>    homeassistant/home-assistant:stable</code>
+</pre>
+                        </p>
+                        <p>
+                            If a container is destroyed, any data that was created in it is destroyed also. We need the configuration data to be stored outside of our container in our Sync folder. 
+                            The second --mount flag is binding the containers congif folder to our Sync/ha_config folder. 
+                        </p>
+                        <p>
+                            This container is larger then our last container so it takes a while to spin up. Now is a good time to grab a cup of coffee.
+                        </p>
+                        <p>
+                            Once it's complete, if you check the status of the Sync you will probably notice that it is reporting failures. This is because the files written to ha_conf don't belong 
+                            to the user pi. We need to give the user pi full access to the config file. Run:
+                            <pre><code>$ sudo chmod -R 777 /Sync/ha_config</code></pre>
+                        </p>
+                        <div class="note">
+                            <p>
+                                <strong>chmod</strong> stands for "Change Mode" and will change permissions for a file
+                            </p>
+                            <p>
+                                <strong>-R</strong> is a recursive flag, telling the command to run in the target directory and all files and sub directories within it
+                            </p>
+                            <p>
+                                <strong>777</strong> is the Octal notation for Full access
+                            </p>
+                            <p>
+                                <strong>/Sync/ha_conf</strong> is the directory we are applying this to.
+                            </p>
+                        </div>
+                        <p>
+                            After a few seconds, Syncthing should finish syncing.
+                        </p>
+                        <p>
+                            That's it, Home Assistant is setup. Open your browser and navigate to <strong>[NODE 1 IP]:8123</strong> to go through the built in setup.
+                        </p>
+                        <p>
+                            <strong>Note</strong> - Because this is a larger container, deployment takes longer, this goes for redeploying on new nodes also. Once it has been deployed to a 
+                            node, startup is faster on redeployment.
+                        </p>
+                        <h2>Cluster monitoring</h2>
+                        <p>
+                            So, right now we have a pretty complete cluster with a home assistant and swarm monitoring. However, we have to go to multiple sites to get information on our cluster. 
+                            Lets have Home Assistant check the status of our Cluster and report it for us. To do this, we are going to create "binary sensors" that periodically ping the node IP 
+                            addresses and tells us, is the node on or off.
+                        </p>
+                        <p>
+                            SSH into the node with Home Assistant Deployed. Technically any of the nodes will work as the configuration is synced. We are going to edit the configuration.yaml file 
+                            to add the binary sensors. Run:
+                            <pre><code>$ nano Sync/ha_conf/configuration.yaml</code></pre>
+                            At the bottom of that file, add the following, make sure you replace my node IP Addresses and name's with your information.
+<pre>
+# Binary Sensor's for Network Devices
+binary_sensor:
+    - platform: ping
+      host: 192.168.1.170
+      name: "HANA 01"
+        
+    - platform: ping
+      host: 192.168.1.171
+      name: "HANA 02"
+        
+    - platform: ping
+      host: 192.168.1.172
+      name: "HANA 03"
+    
+    - platform: ping
+      host: 192.168.1.173
+      name: "HANA 04"
+</pre>
+                        </p>
+                        <p>
+                            Keep in mind that spacing in YAML is critical. you can copy and paste what I have typed here, and edit the IP addresses and names. Save the file and exit 
+                            (<strong>[CTRL+O]</strong> then <strong>[CTRL]+X</strong>). We need to restart the server so that it will read the changes to the YAML file. In the Home 
+                            Assistant interface click on <strong><em>Configuration</em></strong> in the lower left, then <strong><em>Server Controls</em></strong> and click restart. 
+                            The Server will restart itself and will be back up in a minute. Watch the notifications, it will tell you when the server is back up completely. 
+                        </p>
+                        <p>
+                            Lets create a new dashboard, navigate to the overview dashboard, Click the three dots and Edit Dashboard. Then click the yellow + in the header to add a new Dashboard. 
+                            I called mine "Network". Make sure to click Panel Mode. This allows you to use only one card, but makes the card full width. Save and click Add Card
+                        </p>
+                        <p>
+                            Our lone card is going to be Vertical Stack, at the bottom of the card list. This will allow us to stack multiple cards vertically, each full width. In the vertical stack 
+                            card select Entities as the next card. Give this card a title if you want. Mine is HANA Status, then in the Entity List select the dropdown and add the new sensors. 
+                        </p>
+                        <figure>
+                            <img src="../../assets/img/homeauto/hana_status_dashboard_card_setup.png" style="margin-left: auto; margin-right: auto; display: block; max-width: 100%;">
+                        </figure>
+                        <p>
+                            Checking Color icons based on state will change the color of the icon if a device is disconnected. 
+                        </p>
+                        <p>
+                            Next click the + to add another card to the stack. This time choose the Webpage card. In the URL enter the address to one of the nodes and port 8080 
+                            (Which was the Swarm Monitor), Delete the Aspect Ratio value to display the full height.
+                        </p>
+                        <figure>
+                            <img src="../../assets/img/homeauto/hana_status_dashboard_card_setup_2.png" style="margin-left: auto; margin-right: auto; display: block; max-width: 100%;">
+                        </figure>
+                        <p>
+                            Click Save and view your dashboard. Now we have one place to go to make sure all our nodes are online, and see where our containers are deployed. Later I will be 
+                            adding a check to make sure the nodes are Synced.
+                        </p>
+                        <p>
+                            If you have strictly followed this tutorial, your home automation server will ONLY be available on your local network. Home Assistant offers a cloud integration that 
+                            allows you access your HA server remotely, but also opens your data to the outside world, on servers no longer under your control. I may at a later date show a method 
+                            for opening your server to the internet, but the number of times I have wished I had remote access do not outweigh my security concerns.
+                        </p>
+                        <p>
+                            You now have the Home Assistant setup complete. Go have fun and play. In the next section we will be doing some organization to help us maintain our cluster.
+                        </p>
+                        <!--Tutorial Navigation Buttons-->
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <button class="btn btn-secondary nav-button" onclick="window.location.href='homeAutomation_02.html';">02. Syncing Data</button>
+                                </div>
+                                <div class="col-md-4"></div>
+                                <div class="col-md-4">
+                                    <button class="btn btn-secondary nav-button"onclick="window.location.href='#!';">04. Getting Organized</button>
+                                </div>
+                            </div>
+                        </div>
+                       
+                    </div>
+                </div>
+            </div>
+        </article>
+        <!-- Footer-->
+        <footer class="border-top">
+            <div class="container px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-md-10 col-lg-8 col-xl-7">
+                        <ul class="list-inline text-center">
+                            <li class="list-inline-item">
+                                <a href="#!">
+                                    <span class="fa-stack fa-lg">
+                                        <i class="fas fa-circle fa-stack-2x"></i>
+                                        <i class="fab fa-twitter fa-stack-1x fa-inverse"></i>
+                                    </span>
+                                </a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a href="#!">
+                                    <span class="fa-stack fa-lg">
+                                        <i class="fas fa-circle fa-stack-2x"></i>
+                                        <i class="fab fa-discord fa-stack-1x fa-inverse"></i>
+                                    </span>
+                                </a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a href="https://github.com/silverback338/">
+                                    <span class="fa-stack fa-lg">
+                                        <i class="fas fa-circle fa-stack-2x"></i>
+                                        <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                                    </span>
+                                </a>
+                            </li>
+                        </ul>
+                        <div class="small text-center text-muted fst-italic">Copyright &copy; kranous.com 2022</div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <!-- Bootstrap core JS-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Core theme JS-->
+        <script src="js/scripts.js"></script>
+    </body>
+</html>
