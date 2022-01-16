@@ -11252,8 +11252,15 @@ header.masthead .site-heading .h1 {
   font-size: .85em;
 
 }
+.warning-note {
+  background-color: #f3ee92;
+  padding: 20px 20px 20px 20px;
+  border-radius: 5px;
+  font-size: .85em;
+}
 .nav-button {
   width: 190px;
+  height: 75px;
 
 }
 @media (min-width: 992px) {

@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>kranous - Home Automation</title>
+        <link rel="icon" type="image/x-icon" href="../../assets/favicon.ico" />
+        <!-- Font Awesome icons (free version)-->
+        <script src="https://use.fontawesome.com/releases/v5.15.4/js/all.js" crossorigin="anonymous"></script>
+        <!-- Google fonts-->
+        <link href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css" />
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="../../css/styles.css" rel="stylesheet" />
+    </head>
+    <body>
+        <!-- Navigation-->
+        <nav class="navbar navbar-expand-lg navbar-light" id="mainNav">
+            <div class="container px-4 px-lg-5">
+                <a class="navbar-brand" href="../../index.html">kranous.com</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                    Menu
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarResponsive">
+                    <ul class="navbar-nav ms-auto py-4 py-lg-0">
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="../../index.html">Home</a></li>
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="../../about.html">About</a></li>
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="../../projectList.html">Projects</a></li>
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <!-- Page Header-->
+        <header class="masthead" style="background-image: url('assets/img/post-bg.jpg')">
+            <div class="container position-relative px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-md-10 col-lg-8 col-xl-7">
+                        <div class="post-heading">
+                            <h1>Home Automation</h1>
+                            <h2 class="subheading">Part 2: Syncing Data</h2>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- Post Content-->
+        <article class="mb-4">
+            <div class="container px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-md-10 col-lg-8 col-xl-7">
+                        <figure>
+                            <img src="../../assets/img/homeauto/pexels-photo-2097628-edited.jpeg" style="margin-left: auto; margin-right: auto; display: block; max-width: 100%;">
+                            <figcaption>Photo by Brett Sayles on Pexels.com</figcaption>
+                        </figure>
+                        <h2>What is the cloud?</h2>
+                        <p>
+                            Its not just a lame marketing buzz word. "The cloud" is a distributed network of computing resources and data storage. When you upload a picture to 
+                            google photos, you upload to a remote server managed by google. Then instead of storing the actual bytes that make up the image on your specific 
+                            device, you store a link to that server that is storing the actual data. Allowing you to access the data from anywhere that you have a connection. 
+                            With "cloud based" applications, the idea is that minimal manipulation of data is happening on the local device. Information is sent from the local 
+                            device to a remote server, data is processed, and results are returned to the local device. This allows complex tasks to be done by interfacing with 
+                            powerful servers with not so powerful devices (Like cell phones and tablets). 
+                        </p>
+                        <h2>Microservices</h2>
+                        <p>
+                            Way back, when a program was needed, you would write the program that took in data, did all the data manipulation, and output the result. If a bug was 
+                            found or an update was needed, the changes were made, the entire application was recompiled and repackaged with whatever updated libraries were needed, 
+                            and the entire application was redeployed. This is called monolithic architecture.
+                        </p>
+                        <p>
+                            As applications get bigger, and more data needs to be processed, faster, with less down time, the time it takes to update and redeploy monolithic 
+                            architecture becomes a problem.
+                        </p>
+                        <p>
+                            So we break our massive application into multiple smaller applications, each responsible for a tiny bit of the total process. This means if there is a 
+                            bug or a performance update in one part of the application, that one microservice can be patched without taking the entire system offline. If we have 
+                            multiple copies of that specific microservice running, we can complete a "rolling update" where we take one node offline at a time to update and the end 
+                            user never notices an interruption.
+                        </p>
+                        <p>
+                            In <a href="homeAutomation_01.html">part 1</a> we installed our first microservice called visualizer (By alexellis2). That services only job is to monitor 
+                            the status of our cluster. We will add more services to our cluster to make it more useful to us. 
+                        </p>
+                        <p>
+                            In part 2 we will setup our own internal cloud data share. We have a few possible ways of doing this, we can set up Network Attached Storage (NAS) and link 
+                            each of our nodes to it. But a NAS would require additional hardware and provides an area for single point of failure. If something happens to the NAS, our 
+                            cluster looses access to it's data and it can't run.
+                        </p>
+                        <p>
+                            Next best Idea, we use a NAS and another microservice that periodically and regularly syncs data between the nodes and the NAS. This will generate copies of 
+                            the data across the nodes that they can access locally. If the NAS goes off line, each node has it's own copy of the data to work with. The downside is since 
+                            we can't predict when data will be written by each of our services, we will have to assume the data we are using is at least one sync cycle behind. If a node 
+                            goes offline between sync cycles, that data is lost.
+                        </p>
+                        <p>
+                            So let's remove the NAS from the equation. We will have an application running on each node that monitors the data, and each time data is changed on one node, 
+                            it will send that update, and only that update to the other nodes. By eliminating the NAS as a middle-man we can remove the additional time needed for the data 
+                            to be written to disk and for each node to access and copy the data. While there will still be time required to sync, it will be much less, reducing the chance 
+                            of a sync error if a node goes offline. We can take this a step further and have our sync application monitor the changes that are made. If 2 nodes make changes 
+                            to the same file, it can check the changes and attempt to merge them. If the merge fails, it can alert us to a data merge failure and we can fix the problem. 
+                            Since we aren't using a central server and are communicating directly between nodes, or peers, this structure is called peer to peer (P2P).
+                        </p>
+                        <h2>Syncthing</h2>
+                        <p>
+                            <em>Syncthing has not been working great in this application. It would work well as a self-hosted onedrive alternative, but having multiple nodes writing data 
+                                frequently causes frequent merge issues. I am leaving this tutorial active while I find and test a better alternative for this application
+                            </em>
+                        </p>
+                        <p>
+                            <a href="https://syncthing.net/" target="_blank">Syncthing</a> is an opensource program that synchronizes files in real time across multiple computers. Since we are self hosting it, our data stays local to the 
+                            devices we own and control. Syncthing is cross platform and has installers for Windows and Mac also. I highly recommend checking out the <a href="https://docs.syncthing.net/" target="_blank">documentation</a>.
+                        </p>
+                        <p>
+                            Syncthing has a local GUI (used for setup) that is accessed through a browser accessed on port 8384. By default, it is only open to the local machine. However, 
+                            we don't have a browser or graphical display on our nodes. We can solve this problem by creating a tunnel through our SSH connection. When we connect through SSH, 
+                            we will tell the connection to forward a port from our local machine, to a port on the node, which allows us to access that port on the node as if it is on our 
+                            local machine. If you are using the command line to SSH you would run:
+                            <pre><code>> ssh -L 9990:localhost:8384 pi@[NODE ADDRESS]</code></pre>
+                            Replacing [NODE ADDRESS] with the address of the node you are accessing.
+                        </p>
+                        <div class="note">
+                            <p>What exactly is this command doing?</p>
+                            <p>
+                                <strong>ssh</strong> calls the windows ssh program
+                            </p>
+                            <p>
+                                <strong>-L</strong> tells ssh you want to create a tunnel
+                            </p>
+                            <p>
+                                <strong>9990</strong> is the port you want to use to access the tunnel on the local machine
+                            </p>
+                            <p>
+                                <strong>localhost</strong> is the local computer used to access the tunnel
+                            </p>
+                            <p> 
+                                <strong>8384</strong> is the target port at the other end of the tunnel. 
+                            </p>
+                            <p>
+                                <strong>pi@{NODE ADDRESS]</strong> is the username and address of the remote computer you are connecting to
+                            </p>
+                        </div>
+                        <p>
+                            At this point I would recommend switching to the command line on windows, but we can do this with PuTTY also.
+                        </p>
+                        <p>
+                            Open PuTTY and enter the hostname and port, leave SSH checked. In the 'Category' list on the left select <strong>SSH > Tunnels</strong>.
+                        </p>
+                        <figure>
+                            <img src="../../assets/img/homeauto/putty_tunnel_1.png" style="margin-left: auto; margin-right: auto; display: block;">
+                        </figure>
+                        <p>
+                            In <strong>Source port</strong> enter the port you will use on your local machine, I am using 9990, 9991, 9992, and 9993 to access each Pi. In Destination 
+                            type in <strong>[NODE ADDRESS]:8384</strong>. Then click Add and Open.
+                        </p>
+                        <figure>
+                            <img src="../../assets/img/homeauto/putty_tunnel_2.png" style="margin-left: auto; margin-right: auto; display: block;">
+                        </figure>
+                        <div class="warning-note">
+                            <strong>NOTE:</strong> When using an SSH tunnel, make sure you properly exit the session by typing 'exit' in the terminal to terminate the connection. If 
+                            at any time through this tutorial, you get connection errors repeatedly displaying in the terminal, exit out of ssh sessions and reboot your local machine 
+                            to clean up any tunnels that may have errors. I suggest doing this configuration one node at a time.
+                        </div>
+                        <h2>Adding the packages</h2>
+                        <p>
+                            We need to add the syncthing repositories to apt. We will add the stable repo to apt sources
+<pre>
+<code>$ echo "deb https://apt.syncthing.net/ syncthing stable" | \</code>
+<code>  sudo tee /etc/apt/sources.list.d/syncthing.list</code>
+</pre>
+                            Next we will add the PGP keys for the repo
+<pre>
+<code>$ curl -s https://syncthing.net/release-key.txt | \</code>
+<code>  sudo apt-key add -</code>
+</pre>
+                            And finaly we pin the package
+<pre>
+<code>$ printf "Package: *\nPin: origin apt.syncthing.net\nPin-Priority: 990\n" | \</code>
+<code>  sudo tee /etc/apt/preferences.d/syncthing</code>
+</pre>
+                            This tells apt to prioritize the syncthing repo when updating, and makes sure we stay on a stable release.
+                        </p>
+                        <p>
+                            Run apt update and install syncthing
+<pre>
+<code>$ sudo apt update</code>
+<code>$ sudo apt install syncthing</code>
+</pre>
+                            Once it is complete, start syncthing by running 
+                            <pre><code>$ syncthing</code></pre>
+                        </p>
+                        <p>
+                            Then open a browser on your local computer and navigate to <strong>localhost:[TUNNEL PORT NUMBER]</strong>
+                        </p>
+                        <figure>
+                            <img src="../../assets/img/homeauto/syncthing_gui_main.png" style="margin-left: auto; margin-right: auto; display: block; max-width: 100%;">
+                        </figure>
+                        <p>
+                            You will probably have a warning telling you authentication is disabled. We are going to open the gui to our local network and turn on authentication.
+                        </p>
+                        <p>
+                            Click on Actions > Settings in the Top Right Corner
+                        </p>
+                        <p>
+                            Then click on the GUI tab.
+                        </p>
+                        <p>
+                            Change GUI Listen Address from 127.0.0.1:8384 to 0.0.0.0:8384
+                        </p>
+                        <p>
+                            Add a GUI Authentication User and GUI Authentication Password and check Start Browser. 
+                        </p>
+                        <figure>
+                            <img src="../../assets/img/homeauto/syncthing_gui_settings.png" style="margin-left: auto; margin-right: auto; display: block; max-width: 100%;">
+                        </figure>
+                        <p>
+                            Then click save. It should ask you to authenticate. Navigate to <strong>[NODE IP ADDRESS]:8384</strong> and enter your new credentials to verify it is working correctly.
+                        </p>
+                        <p>
+                            Go back to the terminal and terminate syncthing by typing [CTRL]+C. We want syncthing to start automatically on boot.
+                            <pre><code>$ systemctl enable syncthing@pi.service</code></pre>
+                            It will ask you to authenticate the user pi twice then start the service.
+                            <pre><code>$ systemctl start syncthing@pi.service</code></pre>
+                            And authenticate one last time. (You will not have to do this at each boot).
+                        </p>
+                        <div class="note">
+                            Why does this look different then when we set up docker to run on boot?<br>
+                            Because syncthing is dealing with the creation and editing of files, we need to assign a user to the service that owns those files. syncthing@pi.service, tells the 
+                            computer to run syncthing as the user pi
+                        </div>
+                        <p>
+                            Reboot the pi and repeat this setup for each node in the cluster.
+                        </p>
+                        <h2>Adding devices</h2>
+                        <p>
+                            Each node needs to be told what nodes it is syncing with. Open your browser and navigate to each nodes syncthing dashboard in it's own tab. Syncthing can automatically 
+                            detect the other nodes, but they need to be added to the allow list. On the first nodes dashboard, click <strong>Add Remote Device</strong> in the bottom right hand corner. A list of 
+                            discovered Device ID's is presented as links. Click the top link, hit save and repeat for each link. Then click over to the other nodes, a message window should be at 
+                            top informing you another device has added this one and asking if you want to add the device. Click add.
+                        </p>
+                        <p>
+                            This process has to be done on each node. Navigate to the next node and go through the add remote device process.
+                        </p>
+                        <p>
+                            Once that is complete, click on <strong>Default Folder</strong>, then <strong>Edit</strong> and go to the <strong>Sharing</strong> tab. Select each of the nodes on the list to allow sharing. And repeat this step on each 
+                            device. 
+                        </p>
+                        <p>
+                            SSH into a node (no tunnel needed this time) and type:
+                            <pre><code>$ ls</code></pre>
+                            To list the directories, there should be one called Sync. Change to the Sync directory with 
+                            <pre><code>$ cd Sync</code></pre>
+                            Let's create a test file, run:
+                            <pre><code>$ echo "Testing fily sync" > test</code></pre>
+                            Within a few seconds you should be able to log into any of the other nodes and view the test file in the Sync folder. Once you have verified that all the nodes can see the 
+                            file, pick another node to remove the file:
+                            <pre><code>$ sudo rm test</code></pre>
+                            And after a few more seconds, test should be removed from all nodes Sync directory
+                        </p>
+                        <p>
+                            And we now have file share between our nodes being automatically synced. We can now make sure that as containers are redeployed, they have access to the same information 
+                            on each node. In the next section we will discuss what containers are, we will install Home Assistant, and we will get our first device setup.
+                        </p>
+                        <!--Tutorial Navigation Buttons-->
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <button class="btn btn-secondary nav-button" onclick="window.location.href='homeAutomation_01.html';">01. Building the Cluster</button>
+                                </div>
+                                <div class="col-md-4"></div>
+                                <div class="col-md-4">
+                                    <button class="btn btn-secondary nav-button"onclick="window.location.href='#!';">03. Installing HA</button>
+                                </div>
+                            </div>
+                        </div>
+                       
+                    </div>
+                </div>
+            </div>
+        </article>
+        <!-- Footer-->
+        <footer class="border-top">
+            <div class="container px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-md-10 col-lg-8 col-xl-7">
+                        <ul class="list-inline text-center">
+                            <li class="list-inline-item">
+                                <a href="#!">
+                                    <span class="fa-stack fa-lg">
+                                        <i class="fas fa-circle fa-stack-2x"></i>
+                                        <i class="fab fa-twitter fa-stack-1x fa-inverse"></i>
+                                    </span>
+                                </a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a href="#!">
+                                    <span class="fa-stack fa-lg">
+                                        <i class="fas fa-circle fa-stack-2x"></i>
+                                        <i class="fab fa-discord fa-stack-1x fa-inverse"></i>
+                                    </span>
+                                </a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a href="https://github.com/silverback338/">
+                                    <span class="fa-stack fa-lg">
+                                        <i class="fas fa-circle fa-stack-2x"></i>
+                                        <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                                    </span>
+                                </a>
+                            </li>
+                        </ul>
+                        <div class="small text-center text-muted fst-italic">Copyright &copy; kranous.com 2022</div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <!-- Bootstrap core JS-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Core theme JS-->
+        <script src="js/scripts.js"></script>
+    </body>
+</html>
