@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>kranous - Home Automation</title>
+        <link rel="icon" type="image/x-icon" href="../../assets/favicon.ico" />
+        <!-- Font Awesome icons (free version)-->
+        <script src="https://use.fontawesome.com/releases/v5.15.4/js/all.js" crossorigin="anonymous"></script>
+        <!-- Google fonts-->
+        <link href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css" />
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="../../css/styles.css" rel="stylesheet" />
+    </head>
+    <body>
+        <!-- Navigation-->
+        <nav class="navbar navbar-expand-lg navbar-light" id="mainNav">
+            <div class="container px-4 px-lg-5">
+                <a class="navbar-brand" href="../../index.html">kranous.com</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                    Menu
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarResponsive">
+                    <ul class="navbar-nav ms-auto py-4 py-lg-0">
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="../../index.html">Home</a></li>
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="../../about.html">About</a></li>
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="../../projectList.html">Projects</a></li>
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <!-- Page Header-->
+        <header class="masthead">
+            <div class="container position-relative px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-md-10 col-lg-8 col-xl-7">
+                        <div class="post-heading">
+                            <h1>Home Automation</h1>
+                            <h2 class="subheading">Part 4: Getting Organized</h2>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- Post Content-->
+        <article class="mb-4">
+            <div class="container px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-md-9 col-lg-8 col-xl-7">
+                        <p>
+                            Hopefully you have taken some time to play with Home Assistant and get some stuff running, otherwise you have used this tutorial to build a cluster, to run Home Assistant, 
+                            to track the status of your cluster. Either way, we have a lot going on in this project so far, several services, running across multiple nodes, that required a pretty 
+                            decent chunk of setup. And we will be adding more as we go. So getting organized is very important. In this section I am going to go through creating a Network Diagram 
+                            for our nodes, note taking, and creating a check list of what we have done to help us set up new nodes in the future. 
+                        </p>
+                        <h2>Diagrams</h2>
+                        <p>
+                            As we are add more services, we need to make sure we aren't doubling up on ports, and if we need to troubleshoot, its useful to have a drawing that shows us where everything 
+                            is. So I created a simple network diagram of my cluster that displays information for each node, and contains a list of what services are running, where they can run, and 
+                            what port they are using.
+                        </p>
+                        <figure>
+                            <img src="../../assets/img/homeauto/swarm-network-diagram-r1.jpg" style="margin-left: auto; margin-right: auto; display: block; max-width: 100%;">
+                        </figure>
+                        <p>
+                            It's nothing special, and it doesn't follow any specific standard, but the important thing about documentation is that it is clear and concise. I use draw.io (now diagrams.net) 
+                            to create my diagrams, It's a fantastic app, free to use and you can run it directly in your browser from the <a href="https://app.diagrams.net/" target="_blank">website</a> or 
+                            you can download a <a href="https://github.com/jgraph/drawio-desktop/releases" target="_blank">desktop version</a> of the app.
+                        </p>
+                        <p>
+                            The immediate important pieces of information on the diagram are the host names of each node, the IP Addresses, MACs and Roles. Then on the right we have 2 service tables, a 
+                            docker table which is a list of the containers we are running with port and restrictions, IE When we setup the Visualizer container, we limited the deployment to manager nodes, 
+                            and what I am calling Node Services, which are services that run on the nodes themselves. I also date and rev control any of the diagrams I make so that I can keep a history of 
+                            what I have done. 
+                        </p>
+                        <p>
+                            The symbols I used are generic symbols included with draw.io and I just picked icons that made sense to me. They also match the symbols I use in my home network diagram. 
+                        </p>
+                        <p>
+                            The symbol in the top left is my "cluster" symbol. On my home network diagram, instead of filling it up with all of this information, I can use that "cluster" Symbol with 
+                            the name "HANA Swarm" and the typical information I use to manage the swarm. Then on an additional page I can have this detail page to reference as needed. This helps keep 
+                            my overall network diagram cleaner.
+                        </p>
+                        <p>
+                            The boxes around my nodes and switch are how I designate "Node Groups", which is the physical grouping of the nodes. I consider the switch to be a part of the node group. 
+                            As we add more nodes, and switches, we can box them in the groups and show specific connections to our network gear. This helps troubleshoot issues. If we loose communication 
+                            to a group of nodes, we can look at our diagram to trace up stream and identify the points we need to check to help streamline troubleshooting.
+                        </p>
+                        <p>
+                            When creating your initial documentation, keep it simple. Documentation should be iterated and improved as time goes on. If you  think a piece of information is important, 
+                            but you aren't sure how to integrate it into the diagram, add a notes section, and figure out how to make it pretty later. This is a living document don't be afraid to update 
+                            it over time.
+                        </p>
+                        <h2>Note taking</h2>
+                        <p>
+                            So, you have been taking notes right? Notes beyond the specific things I have been telling you to write down? You wrote that stuff down right? If this is your first project, 
+                            or this is your millionth project and you find you just aren't much of a note taker, use this as an opportunity to start.
+                        </p>
+                        <p>
+                            What's the difference between notes and documentation? Documentation is the primary part of my day job, so the way I view it, notes are for me, documentation is for other 
+                            people. Even through we are doing our own projects, if we want to share what we have done with the rest of the world, there are generally held documentation standards that 
+                            we should try to follow. But notes can be whatever you want. They are for you. Use a notebook, use pen, use crayon, use a spreadsheet, use notepad, use sticky notes. Use a 
+                            method you are comfortable with. 
+                        </p>
+                        <p>
+                            I am using this project to test an application called <a href="http://keepnote.org/" target="_blank">KeepNote</a>. It is a free notebook application that supports rich text, embedded links, screenshots, and separating your 
+                            notes into Folders, Pages, and Sub-Pages. The save file is actually a database and is searchable.
+                        </p>
+                        <figure>
+                            <img src="../../assets/img/homeauto/KeepNote_Screenshot.png" style="margin-left: auto; margin-right: auto; display: block; max-width: 100%;">
+                        </figure>
+                        <p>
+                            As I go through and build the project, I capture my steps, the commands I run, links to information, and I can add screenshots of error messages while I am troubleshooting. 
+                            I really like this format, because I can have a large project notebook for my site projects, each in it's own section, and if I am working on another project and I run into 
+                            an issue I think I have seen before, I can search for it and find what I did.
+                        </p>
+                        <p>
+                            Before switching to KeepNote I was using <a href="https://www.giuspen.com/cherrytree/" target="_blank">cherrytree</a>, which is very similar to KeepNote, but it also allows syntax highlighting of code lines.
+                        </p>
+                        <p>
+                            So, why are we talking about this now? The first three parts of this tutorial were geared towards setting up a system that you can build upon. While there are more specifics we 
+                            have to cover, at this point you can grow your setup into countless different swarms. Take notes as you setup new integrations or if you run into issues. I can pretty much 
+                            guarantee you will have to setup the same integration at another point, or will run into a similar issue again, and your notes can drastically reduce the amount of time it 
+                            takes to redo/troubleshoot these tasks.
+                        </p>
+                        <h2>Setup checklist</h2>
+                        <p>
+                            We have done a lot to get these nodes setup. Few people could be expected to remember every little detail that was done. So we are going to create a checklist of what needs to 
+                            be done to add a new node to our cluster. This checklist is a little out of order from what we did before.
+                        </p>
+                        <h3>The checklist</h3>
+                        <ul>
+                            <li>Setup the image for SSH</li>
+                            <li>Identify the IP Address of the Pi</li>
+                            <li>Connect Via SSH</li>
+                            <li>Update /etc/hosts with new hostname</li>
+                            <li>Update /etc/hostname with new hostname</li>
+                            <li>Update and Upgrade Default Applications</li>
+                            <li>Install Docker</li>
+                            <li>Add user 'pi' to group docker</li>
+                            <li>Set docker services to boot automatically</li>
+                            <li>Join the swarm as a worker or a manager</li>
+                            <li>Add syncthing Repo</li>
+                            <li>Add syncthing PGP Key</li>
+                            <li>Pin Syncthing package</li>
+                            <li>Update and Install Package</li>
+                            <li>Conduct syncthing setup in GUI</li>
+                        </ul>
+                        <p>
+                            We have a few options with this checklist. We could use it as is, and reference the tutorial for details when we want to setup a new node. 
+                            This would be the fastest path to putting the checklist into use, and If you needed to start setting up new nodes IMMEDIATELY, that would be a 
+                            good option. We could expand on this checklist more by adding the specific commands for each step, instructions for selecting hostnames. This would 
+                            take a little longer, but in theory you could hand just the checklist to someone, and they could add a node to the setup. The last option, we use 
+                            this checklist as a base for creating a setup script, then when we want to setup a new node, we get it physically setup, pull the script and run it, 
+                            then we have a setup node. This option takes longer upfront, but makes setting up new nodes MASSIVELY easier. This is the path I am going to take, 
+                            but going into detail will come in a later writeup. 
+                        </p>
+                        <h2>What now?</h2>
+                        <p>
+                            Everything is setup, our home automation server is setup, what do we do now? The rest of my writeups will be about adding functionality, or making improvements. 
+                            Take what you have learned here and continue to learn. Add new integrations and install new containers.
+                        </p>
+                        <p>
+                            The best piece of advice I can give is to iterate. Let's say you wanted to write a script that ran in the morning when your alarm clock went off. It would turn on the 
+                            bathroom light, turn on the kitchen light, power on the coffee pot, turn on the TV and tune to the news. I am going to break this down into smaller chunks:
+                            <ol>
+                                <li>Setup the individual lights</li>
+                                <li>Create a Light Group</li>
+                                <li>Create a Scene that puts the lights to the brightness I want</li>
+                                <li>Create a button that turns on the light group and sets the correct scene</li>
+                                <li>Add a controllable outlet for the coffee pot</li>
+                                <li>Add the outlet control to the Light group button</li>
+                                <li>Add my TV to the setup</li>
+                                <li>Add turning the TV ON to my button</li>
+                                <li>Write a Script for the TV that tunes to a specific Channel</li>
+                                <li>Add that Script to the button</li>
+                                <li>Learn how to trigger an event from my phone alarm</li>
+                                <li>Write a script to perform each action when my alarm goes off</li>
+                            </ol>
+                        </p>
+                        <p>
+                            At the end of each step, I have functionality that I didn't have before. I also start simple and work my way complicated, this allows me to gradually learn. 
+                            If I figure something out on step 6 that could be used to improve what I did on step 4, then I can update step 4. But each day I sit down and work on it, I 
+                            make progress and can start using what I integrated, which does wonders for helping to prevent you from getting discouraged. And remember to take notes. 
+                        </p>
+
+                        <!--Tutorial Navigation Buttons-->
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <button class="btn btn-secondary nav-button" onclick="window.location.href='homeAutomation_03.html';">03. Installing HA</button>
+                                </div>
+                                <div class="col-md-4"></div>
+                                <div class="col-md-4">
+                                    <!--<button class="btn btn-secondary nav-button"onclick="window.location.href='#!';">04. Getting Organized</button>-->
+                                </div>
+                            </div>
+                        </div>
+                       
+                    </div>
+                </div>
+            </div>
+        </article>
+        <!-- Footer-->
+        <footer class="border-top">
+            <div class="container px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-md-10 col-lg-8 col-xl-7">
+                        <ul class="list-inline text-center">
+                            <li class="list-inline-item">
+                                <a href="#!">
+                                    <span class="fa-stack fa-lg">
+                                        <i class="fas fa-circle fa-stack-2x"></i>
+                                        <i class="fab fa-twitter fa-stack-1x fa-inverse"></i>
+                                    </span>
+                                </a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a href="#!">
+                                    <span class="fa-stack fa-lg">
+                                        <i class="fas fa-circle fa-stack-2x"></i>
+                                        <i class="fab fa-discord fa-stack-1x fa-inverse"></i>
+                                    </span>
+                                </a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a href="https://github.com/silverback338/">
+                                    <span class="fa-stack fa-lg">
+                                        <i class="fas fa-circle fa-stack-2x"></i>
+                                        <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                                    </span>
+                                </a>
+                            </li>
+                        </ul>
+                        <div class="small text-center text-muted fst-italic">Copyright &copy; kranous.com 2022</div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <!-- Bootstrap core JS-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Core theme JS-->
+        <script src="../../js/scripts.js"></script>
+    </body>
+</html>
