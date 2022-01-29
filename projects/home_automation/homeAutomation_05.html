@@ -41,7 +41,7 @@
                     <div class="col-md-10 col-lg-8 col-xl-7">
                         <div class="post-heading">
                             <h1>Home Automation</h1>
-                            <h2 class="subheading">Setting up your own home automation server</h2>
+                            <h2 class="subheading">Part 5: Creating Out Own Microservice</h2>
                             
                         </div>
                     </div>
@@ -52,37 +52,50 @@
         <article class="mb-4">
             <div class="container px-4 px-lg-5">
                 <div class="row gx-4 gx-lg-5 justify-content-center">
-                    <div class="col-md-10 col-lg-8 col-xl-7">
-                        <img src="../../assets/img/homeauto/pi-stack.jpg" style="max-width:100%; max-height:100%">
-                        <p>My current home server (1x Dell R710) is starting to get pretty full and I want to free up some resources. 
-                            I figure the best way is to move my home automation server onto its own setup. 
-                            I have some requirements for my new setup:
-                            <ul>
-                                <li>The setup must be cheap - preferably using components I have lying around, or that I can pick up cheap and fast</li>
-                                <li>It must be reliable – Automated Backups, and self healing as much as possible.</li>
-                                <li>It should be scalable – If I need more resources it should be quick and cheap to add resources.</li>
-                                <li>It should increase my skillset – I want to learn something new doing this.</li>
-                                <li>It should be fun – I love automation and this opportunity to refresh my setup should be fun to do, and at least not painful to maintain.</li>
-                            </ul>
+                    <div class="col-md-9 col-lg-8 col-xl-7">
+                        <p>
+                            I am the world's OKest cook. Outside of some trusty blue box mac and cheese, or throwing meat over fire, I have to look at a recipe to have any chance at
+                            making something edible. But recipe websites are...annoying. You have to scroll through paragraphs of why butter nut squash reminds the author of the color
+                            purple in the fall. It's annoying, and it slows me down. Home Assistant has a lot of great integrations, but I havn't found one for storing recipies. 
                         </p>
                         <p>
-                            Looking at my requirements, a cluster of raspberry pi’s sounds like a great idea. I have a stack of pi 3B and 3B+ from old projects,
-                             and the 3B and 3B+ can be picked up on amazon for less then $40. A docker swarm will redeploy containers if a node goes offline, 
-                             and with some additional configuration the swam can auto-scale microservices that require more resources, as needed. PLUS I have never 
-                             built a cluster before so I get to learn something new.
+                            Home Assistant is, at it's core, a hub for microservices. Each integration can be thought of as a microservice. I can't find a microservice to fit my culinary
+                            needs, so I will make one. We are going to be adding two microservices to our setup here, we are going to add a container with a MySQL database, and we are going
+                            create an API using Python and Flask to send information to and recieve information from the database. We will then create a custom UI (Card) in Home Assistant to
+                            act as the interface for our API. 
                         </p>
-                        <hr class="my-4" />
+                        <figure>
+                            <img src="../../assets/img/homeauto/recipe_book_diagram_1.png" style="margin-left: auto; margin-right: auto; display: block; max-width: 100%;">
+                        </figure>
                         <p>
-                            I am breaking this project into smaller chunks. At the end of each entry, there will be a functioning section of the project that can 
-                            be used and grown upon (Home Assistant is installed in part 3). Any code that is written will be published on my github. You can 
-                            replicate the code yourself or just take and run my code. After the server is setup and running we will head into my shop to build 
-                            an enclosure for the server and a control panel, then we will start looking at designing our own IoT devices.
+                            So why are we doing it this way instead of just creating the UI in flask and embedding a webpage like we did with the visualizer in part 3? I want to be able to 
+                            share information from the recipe book with other integrations. For example, I want to beable to add ingredients from the recipie straight to my shopping list 
+                            integration. I would also like to beable to add a recipe to my calander to help with meal planning. We could find a recipe, then schedule it on our calander. If 
+                            we store the expected prep and cook times with the recipe, then we can schedule what time we want to eat, and have Home Assistant back schedule for prepping and 
+                            cooking.
                         </p>
-                        <p><a href="homeAutomation_01.html">Part 1 - Building the Cluster</a></p>
-                        <p><a href="homeAutomation_02.html">Part 2 - Syncing Data</a></p>
-                        <p><a href="homeAutomation_03.html">Part 3 - Installing and Configuring Home Assistant</a></p>
-                        <p><a href="homeAutomation_04.html">Part 4 - Getting Organized</a></p>
-                        <p><a href="homeAutomation_05.html">Part 5 - Creating Our Own Microservice</a></p>
+                        <figure>
+                            <img src="../../assets/img/homeauto/recipe_book_diagram_2.png" style="margin-left: auto; margin-right: auto; display: block; max-width: 100%;">
+                        </figure>
+                        <p>
+                            This tutorial is going to cover the integration of the API and Database into our cluster. I have provided links to my Recipie Book repo and Docker Image. I will not 
+                            be going into detail in writing APIs in flask. If you would like to learn more about flask, I suggest Miguel Grinberg's 
+                            <a href="https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-i-hello-world" target="_blank">Flask Mega Tutorial</a>
+                        </p>
+
+                        <!--Tutorial Navigation Buttons-->
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <button class="btn btn-secondary nav-button" onclick="window.location.href='homeAutomation_04.html';">04. Getting Organized</button>
+                                </div>
+                                <div class="col-md-4"></div>
+                                <div class="col-md-4">
+                                    <!--<button class="btn btn-secondary nav-button"onclick="window.location.href='#!';">04. Getting Organized</button>-->
+                                </div>
+                            </div>
+                        </div>
+                       
                     </div>
                 </div>
             </div>
