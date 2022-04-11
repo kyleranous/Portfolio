@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>kranous - HANA</title>
+    <link rel="icon" type="image/x-icon" href="../../assets/favicon.ico" />
+    <!-- Font Awesome icons (free version)-->
+    <script src="https://use.fontawesome.com/releases/v5.15.4/js/all.js" crossorigin="anonymous"></script>
+    <!-- Google fonts-->
+    <link href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet"
+        type="text/css" />
+    <link
+        href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800"
+        rel="stylesheet" type="text/css" />
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <link href="../../css/styles.css" rel="stylesheet" />
+</head>
+
+<body>
+    <!-- Navigation-->
+    <nav class="navbar navbar-expand-lg navbar-light" id="mainNav">
+        <div class="container px-4 px-lg-5">
+            <a class="navbar-brand" href="../../index.html">kranous.com</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive"
+                aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                Menu
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav ms-auto py-4 py-lg-0">
+                    <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="../../index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="../../about.html">About</a></li>
+                    <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="!#">Articles</a></li>
+                    <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4"
+                            href="../../projectList.html">Projects</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- Page Header-->
+    <header class="masthead">
+        <div class="container position-relative px-4 px-lg-5">
+            <div class="row gx-4 gx-lg-5 justify-content-center">
+                <div class="col-md-10 col-lg-8 col-xl-7">
+                    <div class="post-heading">
+                        <h1>HANA</h1>
+                        <h2 class="subheading">Home Automation Network Assistant</h2>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- Post Content-->
+    <article class="mb-4">
+        <div class="container px-4 px-lg-5">
+            <div class="row gx-4 gx-lg-5 justify-content-center">
+                <div class="col-md-10 col-lg-8 col-xl-7">
+                    <p>
+                        Creation of a swarm and container orchastration for running microservices can be incredibly
+                        handy
+                        when setting up automation systems. However, container and swarm management can have a steep
+                        learning
+                        curve that may not be accessable to home automation enthusiasts or small businesses.
+                    </p>
+                    <h3>Why use a swarm for home automation?</h3>
+                    <p>
+                        While it may seem like setting up a swarm for home automation is a little overkill, there are
+                        amazing
+                        benifits that a swarm can provide. A common complaint about commercial home automation systems
+                        is
+                        the dependency on connection to an outside resource. "Sorry, Internet is down, I can't change my
+                        thermostat
+                        settings." However, if we self-host a home automation system on a single machine, and the
+                        breaker trips,
+                        or the NIC fails, or we have to run updates on the machine that require restarts, we are in the
+                        same exact
+                        boat. A Swarm or cluster setup lets us use nodes for redundency. Setting the program up to run
+                        as a service
+                        allows it to be automatically redeployed to another node if something happens to the one it is
+                        running on. If
+                        you have family in town and your Kodi or Plex server is running low on resources, it can be
+                        quickly scaled to
+                        more machines and traffic automatically routed, If your service managing your thermostat goes
+                        down in the middle
+                        of the night or while you are gone in the winter, it will be automatically redeployed and you
+                        will come home to a
+                        node that needs to be fixed, but no burst pipes.
+                    </p>
+                    <h3>What is HANA?</h3>
+                    <p>
+                        HANA is a server management tool with the goal of making the setup and management of Docker
+                        swarms easier. It is built with Django and uses the Docker API and Python SDK to communicate
+                        and send commands to the swarm. HANA has both a browser based UI and an API to assist
+                        integration with other automation programs like <a href="https://www.home-assistant.io/">Home
+                            Assistant</a>
+                        and <a href="https://nodered.org/">Node-Red</a>.
+                    </p>
+                    <p>
+                        <strong>Frameworks/Packages Used:</strong>
+                    <ul>
+                        <li>Django 4.0.3</li>
+                        <li>Django Rest 3.13.1</li>
+                        <li>Bootstrap 5</li>
+                        <li>drf-yasg 1.20</li>
+                    </ul>
+                    </p>
+
+                    <h3>Features</h3>
+                    <p>
+                    <ul>
+                        <li>Add existing swarms to be tracked and managed by HANA - HANA can track multiple swarms.</li>
+                        <li>Swarm Dashboard that displays quick glance Node and Service Data</li>
+                        <li>Node Detail pages that display resource utilization, containers on the node, and quick
+                            actions like changing the state of the node (Active, Pause, Drain), or Promoting/Demoting a
+                            node. Useful when a node needs to be taken off-line for maintenance.
+                        </li>
+                        <li>Service Detail Pages that allow quick actions like pausing/restarting a service, and scaling
+                            services up and down.
+                        </li>
+                    </ul>
+                    </p>
+
+                    <p>
+                        <strong>NOTE:</strong><br>
+                        HANA requires the nodes in the swarms to expose their ports and depending on configuration will
+                        run commands as a root user. Currently there is no support for TLS or certificates or
+                        authentication on
+                        API endpoints (On Development Roadmap). If you are using or testing Hana in it's current state,
+                        <strong>DO
+                            NOT</strong> expose it outside of your network.
+                    </p>
+
+                    <h3>Planned Features</h3>
+                    <p>
+                    <ul>
+                        <li>Guided Swarm Setup with script generation to speed up and maintain consistancy when
+                            creating new swarms.
+                        </li>
+                        <li>TLS support to secure the connection between HANA and your swarms.</li>
+                        <li>Authentication requirements on API Endpoints</li>
+                        <li>Single Click Image Deployments to quickly deploy commonly used resources on a swarm</li>
+                        <li>Docker Compose file creation and saving to create your own single click deployments</li>
+                        <li>Service Navigation Dashboard, A single page that will contain links to running services
+                            that have a web ui.
+                        </li>
+                        <li>Swarm Health Checks - Check the status of a swarm and make basic reccomendations</li>
+                        <li>In Browser Terminal Emulators and SSH client for working directly on nodes or in
+                            containers.
+                        </li>
+                        <li>Guided Distributed Volume creation and management. To assist in creating redundant storage
+                            that can be used by your services.
+                        </li>
+                        <li>Guided Private Container Registry creation and management so you can host the containers
+                            you want to use on your network, or add your own containers.
+                        </li>
+                        <li>Swarm and Service Documentation generation.</li>
+                    </ul>
+                    </p>
+
+                    <p>
+                        If you would like to try HANA, please visit the project <a
+                            href="https://github.com/silverback338/hana/tree/main">github</a>. Installation instructions
+                        and instructions for allowing TCP connections to nodes can be found in the README.
+                        <br>
+                        <br>
+                        If you need a starting place to help setup your first swarm, see my tutorial on <a
+                            href="../home_automation/homeAutomation_00.html">Setting Up a
+                            Home Automation Server</a> on a raspberry pi swarm.
+                    </p>
+
+                </div>
+            </div>
+        </div>
+    </article>
+    <!-- Footer-->
+    <footer class="border-top">
+        <div class="container px-4 px-lg-5">
+            <div class="row gx-4 gx-lg-5 justify-content-center">
+                <div class="col-md-10 col-lg-8 col-xl-7">
+                    <ul class="list-inline text-center">
+                        <li class="list-inline-item">
+                            <a href="#!">
+                                <span class="fa-stack fa-lg">
+                                    <i class="fas fa-circle fa-stack-2x"></i>
+                                    <i class="fab fa-twitter fa-stack-1x fa-inverse"></i>
+                                </span>
+                            </a>
+                        </li>
+                        <li class="list-inline-item">
+                            <a href="#!">
+                                <span class="fa-stack fa-lg">
+                                    <i class="fas fa-circle fa-stack-2x"></i>
+                                    <i class="fab fa-discord fa-stack-1x fa-inverse"></i>
+                                </span>
+                            </a>
+                        </li>
+                        <li class="list-inline-item">
+                            <a href="https://github.com/silverback338/">
+                                <span class="fa-stack fa-lg">
+                                    <i class="fas fa-circle fa-stack-2x"></i>
+                                    <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                                </span>
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="small text-center text-muted fst-italic">Copyright &copy; kranous.com 2022</div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- Bootstrap core JS-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Core theme JS-->
+    <script src="../../js/scripts.js"></script>
+</body>
+
+</html>
